@@ -17,9 +17,11 @@ function onChangeColorBody() {
   timerId = setInterval(() => {
     document.body.style.backgroundColor = getRandomHexColor()
   }, 1000);
+  refs.startBtn.setAttribute('disabled', 'true')
 }
 
 function onCancelColorBody() {
   clearInterval(timerId);
   document.body.style.backgroundColor = ''
+  refs.startBtn.removeAttribute('disabled')
 }
