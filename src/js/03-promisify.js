@@ -28,13 +28,15 @@ const users = [
 ];
 
 const toggleUserState = (allUsers, username) => {
+
   const updatedUsers = allUsers.map(user =>
     user.name === username ? { ...user, active: !user.active } : user
   )
+  console.log(updatedUsers);
 
   return new Promise((resolve, reject) => {
     if (username) {
-      resolve('')
+      resolve(`${updatedUsers}`)
     } else {
       reject('There is no user with that name')
     }
