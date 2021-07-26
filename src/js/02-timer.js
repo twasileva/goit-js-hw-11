@@ -43,9 +43,13 @@ class Timer {
 const timer = new Timer()
 refs.startBtn.addEventListener('click', timer.start.bind(timer))
 
-refs.inputDate.addEventListener('blur', e => console.log(Date.parse(new Date(e.target.value))))
+function verificationDate() {
 
+}
 
+const futureDate = refs.inputDate.addEventListener('blur', e => console.log(Date.parse(new Date(e.target.value))))
+
+console.log(futureDate);
 
 
 // console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
