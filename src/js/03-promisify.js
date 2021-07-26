@@ -32,17 +32,16 @@ const toggleUserState = (allUsers, username) => {
   const updatedUsers = allUsers.map(user =>
     user.name === username ? { ...user, active: !user.active } : user
   )
-  console.log(updatedUsers);
 
   return new Promise((resolve, reject) => {
-    if (username) {
-      resolve(`${updatedUsers}`)
-    } else {
-      reject('There is no user with that name')
-    }
-
+    setTimeout(() => {
+      if (username) {
+        resolve({ ...updatedUsers })
+      } else {
+        reject('There is no user with that name')
+      }
+    }, 1000)
   })
-
 };
 
 // Currently the function works like this
@@ -50,26 +49,29 @@ const toggleUserState = (allUsers, username) => {
 // toggleUserState(users, 'Ajax', console.table);
 
 // The function should work like this
-toggleUserState(users, 'Mango').then(console.table);
-toggleUserState(users, 'Ajax').then(console.table);
+// toggleUserState(users, 'Mango').then(console.table);
+// toggleUserState(users, 'Ajax').then(console.table);
 
 // ======================= Subtask 3 =======================
 const randomIntegerFromInterval = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const makeTransaction = (transaction, onSuccess, onError) => {
+const makeTransaction = (transaction) => {
   const delay = randomIntegerFromInterval(200, 500);
 
-  setTimeout(() => {
-    const canProcess = Math.random() > 0.3;
+  return new Promise((resolve, reject) => {
 
-    if (canProcess) {
-      onSuccess({ id: transaction.id, time: delay });
-    } else {
-      onError(transaction.id);
-    }
-  }, delay);
+    setTimeout(() => {
+      const canProcess = Math.random() > 0.3;
+
+      if (canProcess) {
+        resolve({ id: transaction.id, time: delay });
+      } else {
+        reject(transaction.id);
+      }
+    }, delay)
+  })
 };
 
 const logSuccess = ({ id, time }) => {
