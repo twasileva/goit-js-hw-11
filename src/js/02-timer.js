@@ -1,3 +1,7 @@
+import Swal from 'sweetalert2'
+import Tick from '@pqina/flip';
+
+
 const refs = {
   startBtn: document.querySelector('button[data-start]'),
   inputDate: document.getElementById('date-selector'),
@@ -6,50 +10,77 @@ const refs = {
   dataMinutes: document.querySelector('span[data-minutes]'),
   dataSeconds: document.querySelector('span[data-seconds]')
 }
-class Timer {
-  constructor() {
 
+
+refs.startBtn.addEventListener('click', onStartTimer)
+refs.inputDate.addEventListener('change', onValidationDate)
+let timerId = null
+
+
+function onValidationDate() {
+  const currentTime = Date.now()
+
+  const diff = Date.parse(new Date(refs.inputDate.value)) - currentTime;
+
+  if (diff > 0) {
+    refs.startBtn.removeAttribute('disabled')
+  } else {
+    refs.startBtn.setAttribute('disabled', 'true')
+    Swal.fire('Please choose a date in the future')
+    clearInterval(timerId)
+    refs.dataDays.textContent = '00'
+    refs.dataHours.textContent = '00'
+    refs.dataMinutes.textContent = '00'
+    refs.dataSeconds.textContent = '00'
   }
+}
 
-  start() {
-    setInterval(() => {
-      const currentTime = Date.now()
-      // console.log(currentTime);
-    }, 1000);
 
-  }
+function onStartTimer() {
 
-  convertMs(ms) {
-    // Number of milliseconds per unit of time
-    const second = 1000;
-    const minute = second * 60;
-    const hour = minute * 60;
-    const day = hour * 24;
+  timerId = setInterval(() => {
+    const currentTime = Date.now()
 
-    // Remaining days
-    const days = Math.floor(ms / day);
-    // Remaining hours
-    const hours = Math.floor((ms % day) / hour);
-    // Remaining minutes
-    const minutes = Math.floor(((ms % day) % hour) / minute);
-    // Remaining seconds
-    const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+    const diff = Date.parse(new Date(refs.inputDate.value)) - currentTime;
 
-    return { days, hours, minutes, seconds };
-  }
+    if (diff > 0) {
+
+      let { days, hours, minutes, seconds } = convertMs(diff)
+
+      let secondsTimer = seconds
+      let minutesTimer = minutes
+      let hoursTimer = hours
+      let daysTimer = days
+      refs.dataDays.textContent = `${daysTimer}`
+      refs.dataHours.textContent = `${hoursTimer}`
+      refs.dataMinutes.textContent = `${minutesTimer}`
+      refs.dataSeconds.textContent = `${secondsTimer}`
+
+    }
+  }, 1000);
 
 }
 
-const timer = new Timer()
+function pad(value) {
+  return String(value).padStart(2, '0')
+}
 
-refs.startBtn.addEventListener('click', timer.start.bind(timer))
+function convertMs(ms) {
+  // Number of milliseconds per unit of time
+  const second = 1000;
+  const minute = second * 60;
+  const hour = minute * 60;
+  const day = hour * 24;
 
+  // Remaining days
+  const days = pad(Math.floor(ms / day));
+  // Remaining hours
+  const hours = pad(Math.floor((ms % day) / hour));
+  // Remaining minutes
+  const minutes = pad(Math.floor(((ms % day) % hour) / minute));
+  // Remaining seconds
+  const seconds = pad(Math.floor((((ms % day) % hour) % minute) / second));
 
-const futureDate = refs.inputDate.addEventListener('blur', e => console.log(Date.parse(new Date(e.target.value))))
+  return { days, hours, minutes, seconds };
+}
 
-console.table(futureDate);
-
-
-// console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-// console.log(convertMs(140000)); //{days: 0, hours: 0, minutes: 2, seconds: 20}
-// console.log(convertMs(24140000)); // {days: 0, hours: 6, minutes: 42, seconds: 20}
